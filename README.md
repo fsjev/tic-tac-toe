@@ -1,1 +1,1 @@
-# tic-tac-toe
+# This repository contains files for my version of the Tic Tac Toe project from The Odin Project.
