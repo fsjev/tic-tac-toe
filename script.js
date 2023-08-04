@@ -1,47 +1,37 @@
 // Module Pattern
 const Gameboard = (() => {
     const _grid = document.querySelector(".grid");
-    return {
-        prop: _grid
-    };
-})()
-
-const GameboardBlocks = (() => {
     const _gridCells = document.querySelectorAll(".grid div");
-    return {
-        prop: _gridCells
-    };
-})()
-
-const GameboardObjects = (() => {
     let _gameboardArray = [];
     return {
-        prop: _gameboardArray
+        grid: _grid,
+        blocks: _gridCells,
+        array: _gameboardArray
     };
 })()
 
-GameboardObjects.prop.push("X");
-GameboardObjects.prop.push("O");
-GameboardObjects.prop.push("X");
-GameboardObjects.prop.push("O");
-GameboardObjects.prop.push("O");
-GameboardObjects.prop.push("X");
-GameboardObjects.prop.push("X");
-GameboardObjects.prop.push("O");
-GameboardObjects.prop.push("X");
+
+Gameboard.array.push("X");
+Gameboard.array.push("O");
+Gameboard.array.push("X");
+Gameboard.array.push("O");
+Gameboard.array.push("O");
+Gameboard.array.push("X");
+Gameboard.array.push("X");
+Gameboard.array.push("O");
+Gameboard.array.push("X");
 
 
-const UpdateGameboard = (() => {
+const Game = (() => {
     let renderPlays = () => {
-        GameboardBlocks.prop.forEach(block => {
-            let matchingPlay = GameboardObjects.prop[Number(block.id)-1];
+        Gameboard.blocks.forEach(block => {
+            let matchingPlay = Gameboard.array[Number(block.id)-1];
             block.textContent = matchingPlay;
         })
     };
     return { renderPlays }
 })()
 
-UpdateGameboard.renderPlays();
-
+Game.renderPlays();
 
 
