@@ -1,14 +1,12 @@
 // Module Pattern
 const Gameboard = (() => {
     const blocks = document.querySelectorAll(".grid div");
-    // let occupiedBlocks = Array.from(blocks).filter(block => block.textContent !== "");
     const storePlay = (event) => {
         let play = {
             sign: event.target.textContent,
             playLocation: event.target.id
         };
         array.push(play);
-        console.log(array);
     };
     let array = [];
     return {blocks, storePlay};
@@ -16,23 +14,31 @@ const Gameboard = (() => {
 
 
 const Game = (() => {
+    let makeComputerPlay = () => {
+        let unoccupiedBlocks = Array.from(Gameboard.blocks).filter(block => block.textContent === "");
+        let randomUnoccupiedBlock = unoccupiedBlocks[Math.floor(Math.random() * unoccupiedBlocks.length)];
+        // randomUnoccupiedBlock.textContent = playerOne.sign === "X"? "O" : "X";
+        randomUnoccupiedBlock.textContent = "O";
+        console.log(randomUnoccupiedBlock);
+    };
     let renderPlays = () => {
         Gameboard.blocks.forEach(block => {
             let matchingPlay = Gameboard.array[Number(block.id)-1];
             block.textContent = matchingPlay;
         })
     };
-    return {renderPlays}
+    return {makeComputerPlay, renderPlays}
 })()
 
-// Game.renderPlays();
-
+// Game.makeComputerPlay()
 
 const playerFactory = (name, sign) => {
     const makePlay = () => {
         Gameboard.blocks.forEach(block => block.addEventListener("click", (e) => {
             block.textContent = sign;
             Gameboard.storePlay(e);
+            
+            Game.makeComputerPlay();
         }));
     };
     return {name, sign, makePlay}
