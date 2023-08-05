@@ -37,8 +37,14 @@ const playerFactory = (name, sign) => {
         Gameboard.blocks.forEach(block => block.addEventListener("click", (e) => {
             block.textContent = sign;
             Gameboard.storePlay(e);
-            
-            Game.makeComputerPlay();
+            function delay(time) {
+                return new Promise(resolve => setTimeout(resolve, time));
+            }
+            async function wait() {
+                await delay(500);
+                Game.makeComputerPlay();
+            }
+            wait();
         }));
     };
     return {name, sign, makePlay}
