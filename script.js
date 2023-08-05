@@ -10,7 +10,6 @@ const Gameboard = (() => {
     };
 })()
 
-
 Gameboard.array.push("X");
 Gameboard.array.push("O");
 Gameboard.array.push("X");
@@ -29,9 +28,21 @@ const Game = (() => {
             block.textContent = matchingPlay;
         })
     };
-    return { renderPlays }
+    return {renderPlays}
 })()
 
-Game.renderPlays();
+// Game.renderPlays();
 
+
+const playerFactory = (name, sign) => {
+    const makePlay = () => {
+        Gameboard.blocks.forEach(block => block.addEventListener("click", () => {
+            block.textContent = sign;
+        }));
+    };
+    return {name, sign, makePlay};
+};
+
+let playerOne = playerFactory("Carlos", "X");
+playerOne.makePlay()
 
