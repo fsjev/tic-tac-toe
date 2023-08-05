@@ -1,25 +1,23 @@
 // Module Pattern
 const Gameboard = (() => {
     const blocks = document.querySelectorAll(".grid div");
-    const storePlay = (event) => {
-        let play = {
-            sign: event.target.textContent,
-            playLocation: event.target.id
-        };
-        array.push(play);
-    };
     let array = [];
-    return {blocks, storePlay};
+    return {blocks, array};
 })()
 
 
 const Game = (() => {
-    let makeComputerPlay = () => {
+    const makeComputerPlay = () => {
         let unoccupiedBlocks = Array.from(Gameboard.blocks).filter(block => block.textContent === "");
         let randomUnoccupiedBlock = unoccupiedBlocks[Math.floor(Math.random() * unoccupiedBlocks.length)];
         // randomUnoccupiedBlock.textContent = playerOne.sign === "X"? "O" : "X";
         randomUnoccupiedBlock.textContent = "O";
-        console.log(randomUnoccupiedBlock);
+        let play = {
+            sign: randomUnoccupiedBlock.textContent,
+            playLocation: randomUnoccupiedBlock.id
+        };
+        Gameboard.array.push(play);
+        console.log(Gameboard.array);
     };
     let renderPlays = () => {
         Gameboard.blocks.forEach(block => {
@@ -30,25 +28,30 @@ const Game = (() => {
     return {makeComputerPlay, renderPlays}
 })()
 
-// Game.makeComputerPlay()
+Game.makeComputerPlay()
 
 const playerFactory = (name, sign) => {
     const makePlay = () => {
         Gameboard.blocks.forEach(block => block.addEventListener("click", (e) => {
             block.textContent = sign;
-            Gameboard.storePlay(e);
-            function delay(time) {
-                return new Promise(resolve => setTimeout(resolve, time));
-            }
-            async function wait() {
-                await delay(500);
-                Game.makeComputerPlay();
-            }
-            wait();
+            let play = {
+                sign: e.target.textContent,
+                playLocation: e.target.id
+            };
+            Gameboard.array.push(play);
+            console.log(Gameboard.array);
+            // function delay(time) {
+            //     return new Promise(resolve => setTimeout(resolve, time));
+            // }
+            // async function wait() {
+            //     await delay(500);    
+            //     Game.makeComputerPlay();
+            // }
+            // wait();
         }));
     };
     return {name, sign, makePlay}
 };
 
 let playerOne = playerFactory("Carlos", "X");
-playerOne.makePlay()
+// playerOne.makePlay()
