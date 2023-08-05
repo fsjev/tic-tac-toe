@@ -5,7 +5,6 @@ const Gameboard = (() => {
     return {blocks, array};
 })()
 
-
 const Game = (() => {
     const makeComputerPlay = () => {
         let unoccupiedBlocks = Array.from(Gameboard.blocks).filter(block => block.textContent === "");
@@ -20,15 +19,16 @@ const Game = (() => {
         console.log(Gameboard.array);
     };
     let renderPlays = () => {
-        Gameboard.blocks.forEach(block => {
-            let matchingPlay = Gameboard.array[Number(block.id)-1];
-            block.textContent = matchingPlay;
-        })
+        Gameboard.array.forEach(play => {
+            let location = play.playLocation;
+            let matchingBlock = Array.from(Gameboard.blocks).find(block => block.id === location);
+            matchingBlock.textContent = play.sign;
+        });
     };
     return {makeComputerPlay, renderPlays}
 })()
 
-Game.makeComputerPlay()
+Game.renderPlays()
 
 const playerFactory = (name, sign) => {
     const makePlay = () => {
@@ -40,18 +40,41 @@ const playerFactory = (name, sign) => {
             };
             Gameboard.array.push(play);
             console.log(Gameboard.array);
-            // function delay(time) {
-            //     return new Promise(resolve => setTimeout(resolve, time));
-            // }
-            // async function wait() {
-            //     await delay(500);    
-            //     Game.makeComputerPlay();
-            // }
-            // wait();
+            function delay(time) {
+                return new Promise(resolve => setTimeout(resolve, time));
+            }
+            async function wait() {
+                await delay(500);
+                Game.makeComputerPlay();
+            }
+            wait();
         }));
     };
     return {name, sign, makePlay}
 };
 
 let playerOne = playerFactory("Carlos", "X");
-// playerOne.makePlay()
+playerOne.makePlay()
+
+
+// let playOne = {sign: 'X', playLocation: '1'}
+
+// let playTwo = {sign: 'O', playLocation: '8'}
+
+// let playThree = {sign: 'X', playLocation: '2'}
+
+// let playFour = {sign: 'O', playLocation: '4'}
+
+// let playFive = {sign: 'X', playLocation: '3'}
+
+// let playSix = {sign: 'O', playLocation: '7'}
+
+// let test = []
+
+// test.push(playOne)
+// test.push(playTwo)
+// test.push(playThree)
+// test.push(playFour)
+// test.push(playFive)
+// test.push(playSix)
+// // console.log(test);
