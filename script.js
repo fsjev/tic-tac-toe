@@ -7,7 +7,7 @@ const Gameboard = (() => {
 
 let playOne = {sign: 'X', playLocation: '5'}
 
-let playTwo = {sign: 'O', playLocation: '9'}
+let playTwo = {sign: 'O', playLocation: '8'}
 
 let playThree = {sign: 'X', playLocation: '4'}
 
@@ -51,31 +51,30 @@ const Game = (() => {
         Gameboard.blocks.forEach(block => {
             if(block.id === "1"){
                 let acrosscheck = Array.from(Gameboard.blocks).filter(block => block.id > "1" && block.id < "4")
-                .every(nextBlock => nextBlock.textContent === block.textContent);
+                .every(nextBlock => nextBlock.textContent === block.textContent && nextBlock.textContent !== "");
 
                 let downCheck = Array.from(Gameboard.blocks).filter(block => block.id === "4" || block.id === "7")
-                .every(nextBlock => nextBlock.textContent === block.textContent);
+                .every(nextBlock => nextBlock.textContent === block.textContent && nextBlock.textContent !== "");
 
                 let diagCheck = Array.from(Gameboard.blocks).filter(block => block.id === "5" || block.id === "9")
-                .every(nextBlock => nextBlock.textContent === block.textContent);
-                
+                .every(nextBlock => nextBlock.textContent === block.textContent && nextBlock.textContent !== "");
 
             }else if(block.id === "3"){
                 let acrosscheck = Array.from(Gameboard.blocks).filter(block => block.id < "3" && block.id >= "1")
-                .every(nextBlock => nextBlock.textContent === block.textContent);
+                .every(nextBlock => nextBlock.textContent === block.textContent && nextBlock.textContent !== "");
 
                 let downCheck = Array.from(Gameboard.blocks).filter(block => block.id === "6" || block.id === "9")
-                .every(nextBlock => nextBlock.textContent === block.textContent);
+                .every(nextBlock => nextBlock.textContent === block.textContent && nextBlock.textContent !== "");
 
                 let diagCheck = Array.from(Gameboard.blocks).filter(block => block.id === "5" || block.id === "7")
-                .every(nextBlock => nextBlock.textContent === block.textContent);
+                .every(nextBlock => nextBlock.textContent === block.textContent && nextBlock.textContent !== "");
                 
             }else if(block.id === "7"){
                 let acrosscheck = Array.from(Gameboard.blocks).filter(block => block.id > "7" && block.id <= "9")
-                .every(nextBlock => nextBlock.textContent === block.textContent);
+                .every(nextBlock => nextBlock.textContent === block.textContent && nextBlock.textContent !== "");
 
                 let upCheck = Array.from(Gameboard.blocks).filter(block => block.id === "6" || block.id === "1")
-                .every(nextBlock => nextBlock.textContent === block.textContent);
+                .every(nextBlock => nextBlock.textContent === block.textContent && nextBlock.textContent !== "");
 
                 // let diagCheck = Array.from(Gameboard.blocks).filter(block => block.id === "5" || block.id === "3")
                 // .every(nextBlock => nextBlock.textContent === block.textContent);
@@ -85,18 +84,17 @@ const Game = (() => {
                 .every(nextBlock => nextBlock.textContent === block.textContent);
 
                 let upCheck = Array.from(Gameboard.blocks).filter(block => block.id === "6" || block.id === "3")
-                .every(nextBlock => nextBlock.textContent === block.textContent);
+                .every(nextBlock => nextBlock.textContent === block.textContent && nextBlock.textContent !== "");
 
                 // let diagCheck = Array.from(Gameboard.blocks).filter(block => block.id === "5" || block.id === "1")
                 // .every(nextBlock => nextBlock.textContent === block.textContent);
 
             }else if(block.id === "5"){
                 let columnCheck = Array.from(Gameboard.blocks).filter(block => block.id === "2" || block.id === "8")
-                .every(nextBlock => nextBlock.textContent === block.textContent);
+                .every(nextBlock => nextBlock.textContent === block.textContent && nextBlock.textContent !== "");
 
                 let rowCheck = Array.from(Gameboard.blocks).filter(block => block.id === "4" || block.id === "6")
-                .every(nextBlock => nextBlock.textContent === block.textContent);
-                console.log(rowCheck, block.textContent);
+                .every(nextBlock => nextBlock.textContent === block.textContent && nextBlock.textContent !== "");
 
             }
         });
@@ -134,3 +132,11 @@ const playerFactory = (name, sign) => {
 let playerOne = playerFactory("Carlos", "X");
 playerOne.makePlay()
 
+// const checks = {
+//     acrosscheck: Array.from(Gameboard.blocks).filter(block => block.id > "1" && block.id < "4")
+//     .every(nextBlock => nextBlock.textContent === block.textContent),
+//     downCheck: Array.from(Gameboard.blocks).filter(block => block.id === "4" || block.id === "7")
+//     .every(nextBlock => nextBlock.textContent === block.textContent),
+//     diagCheck: Array.from(Gameboard.blocks).filter(block => block.id === "5" || block.id === "9")
+//     .every(nextBlock => nextBlock.textContent === block.textContent)
+// }
