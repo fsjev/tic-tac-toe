@@ -2,20 +2,23 @@
 const Gameboard = (() => {
     const blocks = document.querySelectorAll(".grid div");
     let array = [];
-    return {blocks, array};
+    const form = document.querySelector("form");
+    const overlay = document.getElementById("form-overlay");
+    return {blocks, array, form, overlay};
 })()
 
-let playOne = {sign: 'X', playLocation: '4'}
 
-let playTwo = {sign: 'O', playLocation: '9'}
+let playOne = {sign: 'X', playLocation: '6'}
 
-let playThree = {sign: 'X', playLocation: '1'}
+let playTwo = {sign: 'O', playLocation: '1'}
 
-let playFour = {sign: 'O', playLocation: '2'}
+let playThree = {sign: 'X', playLocation: '4'}
+
+let playFour = {sign: 'O', playLocation: '5'}
 
 let playFive = {sign: 'X', playLocation: '7'}
 
-let playSix = {sign: 'O', playLocation: '3'}
+let playSix = {sign: 'O', playLocation: '9'}
 
 let test = [];
 
@@ -40,7 +43,7 @@ const Game = (() => {
         console.log(Gameboard.array);
     };
     const renderPlays = () => {
-        test.forEach(play => {
+        Gameboard.array.forEach(play => {
             let location = play.playLocation;
             let matchingBlock = Array.from(Gameboard.blocks).find(block => block.id === location);
             matchingBlock.textContent = play.sign;
@@ -71,8 +74,14 @@ const Game = (() => {
                         .filter(block => block.id === "5" || block.id === "9" || block.id === "1")
                     }
                 };
+                // if(check[dir].win) console.log(check[dir].blockGroup, block.textContent);
                 for(let dir in check){
-                    if(check[dir].win) console.log(check[dir].blockGroup, block.textContent);
+                    if(check[dir].win){
+                        for(let block of check[dir].blockGroup){
+                            block.setAttribute("class", "win");
+                        };
+                        return block.textContent
+                    }
                 };
 
             }else if(block.id === "3"){
@@ -92,7 +101,12 @@ const Game = (() => {
                     }
                 };
                 for(let dir in check){
-                    if(check[dir].win) console.log(check[dir].blockGroup, block.textContent);
+                    if(check[dir].win){
+                        for(let block of check[dir].blockGroup){
+                            block.setAttribute("class", "win");
+                        };
+                        return block.textContent
+                    }
                 };
             
             }else if(block.id === "7"){
@@ -106,7 +120,12 @@ const Game = (() => {
                     }
                 };
                 for(let dir in check){
-                    if(check[dir].win) console.log(check[dir].blockGroup, block.textContent);
+                    if(check[dir].win){
+                        for(let block of check[dir].blockGroup){
+                            block.setAttribute("class", "win");
+                        };
+                        return block.textContent
+                    }
                 };
 
             }else if(block.id === "5"){
@@ -126,41 +145,77 @@ const Game = (() => {
                     }
                 };
                 for(let dir in check){
-                    if(check[dir].win) console.log(check[dir].blockGroup, block.textContent);
+                    if(check[dir].win){
+                        for(let block of check[dir].blockGroup){
+                            block.setAttribute("class", "win");
+                        };
+                        return block.textContent
+                    }
                 };
             }
         });
     };
-    return {makeComputerPlay, renderPlays, checkForWin}
+    const processForm = (e) => {
+        e.preventDefault();
+        let playerName = document.getElementById("name").value
+        const difficultyChoice = {
+            easy: document.getElementById("easy"),
+            lessEasy: document.getElementById("less-easy")
+        };
+        console.log(playerName);
+        const signChoice = {
+            X: document.getElementById("X"),
+            O: document.getElementById("O")
+        };
+
+        for(let letter in signChoice){
+            if(signChoice[letter].checked){
+                let sign = letter;
+                console.log(sign);
+            }
+        };
+
+        for(let diff in difficultyChoice){
+            if(difficultyChoice[diff].checked){
+                let difficulty = diff;
+                console.log(diff);
+            }
+        };
+
+        hideForm();
+        // runGame();
+    };
+    const hideForm = () => {
+        Gameboard.form.setAttribute("class", "hide");
+        Gameboard.overlay.setAttribute("class", "hide");
+    };
+    const showForm = () => {
+        Gameboard.form.setAttribute("class", "show");
+        Gameboard.overlay.setAttribute("class", "show");
+    };
+    const runGame = (playerName, sign, gameDifficulty) => {
+        let playerOne = playerFactory(playerName, sign);
+        playerOne.makePlay();
+        Game.checkForWin();
+        Game.renderPlays()
+        console.log(Gameboard.array);
+    };
+    return {processForm, showForm}
 })()
 
-Game.renderPlays()
-Game.checkForWin()
-
+Gameboard.form.addEventListener("submit", Game.processForm);
+window.addEventListener("load", Game.showForm);
 
 const playerFactory = (name, sign) => {
     const makePlay = () => {
         Gameboard.blocks.forEach(block => block.addEventListener("click", (e) => {
-            block.textContent = sign;
             let play = {
-                sign: e.target.textContent,
+                sign: sign,
                 playLocation: e.target.id
             };
             Gameboard.array.push(play);
-            console.log(Gameboard.array);
-            function delay(time) {
-                return new Promise(resolve => setTimeout(resolve, time));
-            }
-            async function wait() {
-                await delay(500);
-                Game.makeComputerPlay();
-            }
-            wait();
         }));
     };
     return {name, sign, makePlay}
 };
-
-let playerOne = playerFactory("Carlos", "X");
-playerOne.makePlay()
 

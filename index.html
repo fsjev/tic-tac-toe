@@ -34,6 +34,38 @@
             </a>
         </p>
     </footer>
+    <div class="hide" id="form-overlay"></div>
+    <form class="hide" action="">
+        <h1>
+            <span class="title-sm">Welcome to</span>Tic Tac Toe
+        </h1>
+        <div class="one">
+            <input type="text" name="name" id="name" placeholder="What's your name?" autocomplete="off" required></div>
+        </div>
+        <div class="two">
+                <div class="inner">
+                    <div>
+                        <label for="easy">X</label>
+                        <input type="radio" name="sign" id="X" required>
+                    </div>
+                    <div>
+                        <label for="less-easy">O</label>
+                        <input type="radio" name="sign" id="O" required>
+                    </div>
+                </div>
+        </div>
+        <div class="three">
+            <div>
+                <label for="easy">Easy</label>
+                <input type="radio" name="difficulty" id="easy" required>
+                <label for="less-easy">Less Easy</label>
+                <input type="radio" name="difficulty" id="less-easy" required>
+            </div>
+        </div>
+        <div class="four">
+            <input type="submit" value="Start!">
+        </div>
+    </form>
     <!-- icons -->
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
