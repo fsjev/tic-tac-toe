@@ -9,42 +9,54 @@ const Gameboard = (() => {
 })()
 
 
-let playOne = {sign: 'X', playLocation: '6'}
+// let playOne = {sign: 'X', playLocation: '1'}
 
-let playTwo = {sign: 'O', playLocation: '1'}
+// let playTwo = {sign: 'O', playLocation: '6'}
 
-let playThree = {sign: 'X', playLocation: '4'}
+// let playThree = {sign: 'X', playLocation: '4'}
 
-let playFour = {sign: 'O', playLocation: '5'}
+// let playFour = {sign: 'O', playLocation: '3'}
 
-let playFive = {sign: 'X', playLocation: '7'}
+// let playFive = {sign: 'X', playLocation: '7'}
 
-let playSix = {sign: 'O', playLocation: '9'}
+// let playSix = {sign: 'O', playLocation: '9'}
 
-let test = [];
-Gameboard.array.push(playTwo)
-test.push(playOne)
-test.push(playTwo)
-test.push(playThree)
-test.push(playFour)
-test.push(playFive)
-test.push(playSix)
+// let test = [];
+// Gameboard.array.push(playTwo)
+// Gameboard.array.push(playFour)
+// Gameboard.array.push(playSix)
+// Gameboard.array.push(playFive)
+
+// test.push(playOne)
+// test.push(playTwo)
+// test.push(playThree)
+// test.push(playFour)
+// test.push(playFive)
+// test.push(playSix)
 
 const Game = (() => {
-    let win = false;
+    let gameWon = false;
+    let winnerSign;
     const makeComputerPlay = (sign) => {
         Gameboard.prompts.innerHTML = `<span>Computer</span>'s turn`;
         Gameboard.prompts.style.backgroundColor = "rgba(0, 0, 0, 0.144)";
-        let unoccupiedBlocks = Array.from(Gameboard.blocks).filter(block => block.textContent === "");
-        let randomUnoccupiedBlock = unoccupiedBlocks[Math.floor(Math.random() * unoccupiedBlocks.length)];
-        randomUnoccupiedBlock.textContent = sign === "X"? "O" : "X";
-        // randomUnoccupiedBlock.textContent = "O";
-        let play = {
-            sign: randomUnoccupiedBlock.textContent,
-            playLocation: randomUnoccupiedBlock.id
+        function delay(time){
+            return new Promise(resolve => setTimeout(resolve, time));
         };
-        Gameboard.array.push(play);
-        console.log(Gameboard.array);
+
+        async function wait(){
+            await delay(1000);
+            let unoccupiedBlocks = Array.from(Gameboard.blocks).filter(block => block.textContent === "");
+            let randomUnoccupiedBlock = unoccupiedBlocks[Math.floor(Math.random() * unoccupiedBlocks.length)];
+            let compSign = sign === "X"? "O" : "X";
+            let play = {
+                sign: compSign,
+                playLocation: randomUnoccupiedBlock.id
+            };
+            Gameboard.array.push(play);
+            renderPlays();
+        };
+        wait();
     };
 
     const renderPlays = () => {
@@ -82,12 +94,12 @@ const Game = (() => {
                 // if(check[dir].win) console.log(check[dir].blockGroup, block.textContent);
                 for(let dir in check){
                     if(check[dir].win){
-                        win = true;
+                        gameWon = true;
+                        winnerSign = block.textContent;
                         for(let block of check[dir].blockGroup){
                             block.setAttribute("class", "win");
                         };
-                        return block.textContent
-                    }
+                    };
                 };
 
             }else if(block.id === "3"){
@@ -108,12 +120,12 @@ const Game = (() => {
                 };
                 for(let dir in check){
                     if(check[dir].win){
-                        win = true;
+                        gameWon = true;
+                        winnerSign = block.textContent;
                         for(let block of check[dir].blockGroup){
                             block.setAttribute("class", "win");
                         };
-                        return block.textContent
-                    }
+                    };
                 };
             
             }else if(block.id === "7"){
@@ -128,12 +140,12 @@ const Game = (() => {
                 };
                 for(let dir in check){
                     if(check[dir].win){
-                        win = true;
+                        gameWon = true;
+                        winnerSign = block.textContent;
                         for(let block of check[dir].blockGroup){
                             block.setAttribute("class", "win");
                         };
-                        return block.textContent
-                    }
+                    };
                 };
 
             }else if(block.id === "5"){
@@ -154,15 +166,17 @@ const Game = (() => {
                 };
                 for(let dir in check){
                     if(check[dir].win){
-                        win = true;
+                        gameWon = true;
+                        winnerSign = block.textContent;
                         for(let block of check[dir].blockGroup){
                             block.setAttribute("class", "win");
                         };
-                        return block.textContent
-                    }
+                    };
                 };
             }
         });
+        // console.log(gameWon);
+        // console.log(winnerSign);
     };
     const processForm = (e) => {
         e.preventDefault();
@@ -203,24 +217,25 @@ const Game = (() => {
     };
     const runGame = (playerName, sign, gameDifficulty) => {
         let playerOne = playerFactory(playerName, sign);
-        // while(win === false){
 
+        // while(Gameboard.array.length < 9){
         // }
-        playerOne.makePlay();
-        // Game.checkForWin();
+        playerOne.makePlay(makeComputerPlay);
+        // makeComputerPlay();
+        // checkForWin();
+        
         // makeComputerPlay(sign);
         // renderPlays();
     };
-    return {processForm, showForm, renderPlays}
+    return {processForm, showForm, renderPlays, runGame}
 })()
 
 Gameboard.form.addEventListener("submit", Game.processForm);
-// window.addEventListener("load", Game.showForm);
-
-Game.renderPlays();
+window.addEventListener("load", Game.showForm);
+// Game.renderPlays()
 
 const playerFactory = (name, sign) => {
-    const makePlay = () => {
+    const makePlay = (compPlay) => {
         Gameboard.prompts.innerHTML = `<span>${name}</span>'s turn`;
         Gameboard.prompts.style.backgroundColor = "rgba(0, 224, 30, 0.329)";
         Gameboard.blocks.forEach(block => block.addEventListener("click", (e) => {
@@ -244,14 +259,10 @@ const playerFactory = (name, sign) => {
                     playLocation: e.target.id
                 };
                 Gameboard.array.push(play);
-                console.log(Gameboard.array);
                 Game.renderPlays();
+                compPlay(sign);
             };
         }));
     };
     return {name, sign, makePlay}
 };
-
-
-let playerOne = playerFactory("Link", "X");
-playerOne.makePlay();
