@@ -125,7 +125,7 @@ form h1{
 }
 form input[type=text]{
     border: none;
-    height: 23px;
+    height: 24px;
     background-color: rgba(0, 0, 0, 0.144);
     border-radius: 5px;
     outline: none;
@@ -152,6 +152,12 @@ form input[type=text]{
     align-items: center;
     font-weight: bold;
     font-size: 15px;
+}
+label[for=X]{
+    font-size: 12px;
+}
+label[for=O]{
+    font-size: 14px;
 }
 .three{
     display: flex;
