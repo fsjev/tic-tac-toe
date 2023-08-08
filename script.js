@@ -4,7 +4,8 @@ const Gameboard = (() => {
     let array = [];
     const form = document.querySelector("form");
     const overlay = document.getElementById("form-overlay");
-    return {blocks, array, form, overlay};
+    const prompts = document.querySelector(".prompts");
+    return {blocks, array, form, overlay, prompts};
 })()
 
 
@@ -30,11 +31,13 @@ test.push(playFive)
 test.push(playSix)
 
 const Game = (() => {
-    const makeComputerPlay = () => {
+    const makeComputerPlay = (sign) => {
+        Gameboard.prompts.innerHTML = `<span>Computer</span>'s turn`;
+        Gameboard.prompts.style.backgroundColor = "rgba(0, 0, 0, 0.144)";
         let unoccupiedBlocks = Array.from(Gameboard.blocks).filter(block => block.textContent === "");
         let randomUnoccupiedBlock = unoccupiedBlocks[Math.floor(Math.random() * unoccupiedBlocks.length)];
-        // randomUnoccupiedBlock.textContent = playerOne.sign === "X"? "O" : "X";
-        randomUnoccupiedBlock.textContent = "O";
+        randomUnoccupiedBlock.textContent = sign === "X"? "O" : "X";
+        // randomUnoccupiedBlock.textContent = "O";
         let play = {
             sign: randomUnoccupiedBlock.textContent,
             playLocation: randomUnoccupiedBlock.id
@@ -42,6 +45,7 @@ const Game = (() => {
         Gameboard.array.push(play);
         console.log(Gameboard.array);
     };
+
     const renderPlays = () => {
         Gameboard.array.forEach(play => {
             let location = play.playLocation;
@@ -162,7 +166,7 @@ const Game = (() => {
             easy: document.getElementById("easy"),
             lessEasy: document.getElementById("less-easy")
         };
-        console.log(playerName);
+        
         const signChoice = {
             X: document.getElementById("X"),
             O: document.getElementById("O")
@@ -170,20 +174,19 @@ const Game = (() => {
 
         for(let letter in signChoice){
             if(signChoice[letter].checked){
-                let sign = letter;
-                console.log(sign);
+                var sign = letter;
             }
         };
 
         for(let diff in difficultyChoice){
             if(difficultyChoice[diff].checked){
-                let difficulty = diff;
-                console.log(diff);
+                var difficulty = diff;
             }
         };
 
         hideForm();
-        // runGame();
+        runGame(playerName, sign, difficulty);
+
     };
     const hideForm = () => {
         Gameboard.form.setAttribute("class", "hide");
@@ -196,9 +199,10 @@ const Game = (() => {
     const runGame = (playerName, sign, gameDifficulty) => {
         let playerOne = playerFactory(playerName, sign);
         playerOne.makePlay();
-        Game.checkForWin();
-        Game.renderPlays()
-        console.log(Gameboard.array);
+        // Game.checkForWin();
+        // makeComputerPlay(sign);
+        // Game.renderPlays()
+        // console.log(Gameboard.array);
     };
     return {processForm, showForm}
 })()
@@ -208,12 +212,15 @@ window.addEventListener("load", Game.showForm);
 
 const playerFactory = (name, sign) => {
     const makePlay = () => {
+        Gameboard.prompts.innerHTML = `<span>${name}</span>'s turn`;
+        Gameboard.prompts.style.backgroundColor = "rgba(0, 224, 30, 0.329)";
         Gameboard.blocks.forEach(block => block.addEventListener("click", (e) => {
             let play = {
                 sign: sign,
                 playLocation: e.target.id
             };
             Gameboard.array.push(play);
+            console.log(Gameboard.array);
         }));
     };
     return {name, sign, makePlay}
