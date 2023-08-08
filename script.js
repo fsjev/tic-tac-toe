@@ -22,7 +22,7 @@ let playFive = {sign: 'X', playLocation: '7'}
 let playSix = {sign: 'O', playLocation: '9'}
 
 let test = [];
-
+Gameboard.array.push(playTwo)
 test.push(playOne)
 test.push(playTwo)
 test.push(playThree)
@@ -31,6 +31,7 @@ test.push(playFive)
 test.push(playSix)
 
 const Game = (() => {
+    let win = false;
     const makeComputerPlay = (sign) => {
         Gameboard.prompts.innerHTML = `<span>Computer</span>'s turn`;
         Gameboard.prompts.style.backgroundColor = "rgba(0, 0, 0, 0.144)";
@@ -81,6 +82,7 @@ const Game = (() => {
                 // if(check[dir].win) console.log(check[dir].blockGroup, block.textContent);
                 for(let dir in check){
                     if(check[dir].win){
+                        win = true;
                         for(let block of check[dir].blockGroup){
                             block.setAttribute("class", "win");
                         };
@@ -106,6 +108,7 @@ const Game = (() => {
                 };
                 for(let dir in check){
                     if(check[dir].win){
+                        win = true;
                         for(let block of check[dir].blockGroup){
                             block.setAttribute("class", "win");
                         };
@@ -125,6 +128,7 @@ const Game = (() => {
                 };
                 for(let dir in check){
                     if(check[dir].win){
+                        win = true;
                         for(let block of check[dir].blockGroup){
                             block.setAttribute("class", "win");
                         };
@@ -150,6 +154,7 @@ const Game = (() => {
                 };
                 for(let dir in check){
                     if(check[dir].win){
+                        win = true;
                         for(let block of check[dir].blockGroup){
                             block.setAttribute("class", "win");
                         };
@@ -198,31 +203,55 @@ const Game = (() => {
     };
     const runGame = (playerName, sign, gameDifficulty) => {
         let playerOne = playerFactory(playerName, sign);
+        // while(win === false){
+
+        // }
         playerOne.makePlay();
         // Game.checkForWin();
         // makeComputerPlay(sign);
-        // Game.renderPlays()
-        // console.log(Gameboard.array);
+        // renderPlays();
     };
-    return {processForm, showForm}
+    return {processForm, showForm, renderPlays}
 })()
 
 Gameboard.form.addEventListener("submit", Game.processForm);
-window.addEventListener("load", Game.showForm);
+// window.addEventListener("load", Game.showForm);
+
+Game.renderPlays();
 
 const playerFactory = (name, sign) => {
     const makePlay = () => {
         Gameboard.prompts.innerHTML = `<span>${name}</span>'s turn`;
         Gameboard.prompts.style.backgroundColor = "rgba(0, 224, 30, 0.329)";
         Gameboard.blocks.forEach(block => block.addEventListener("click", (e) => {
-            let play = {
-                sign: sign,
-                playLocation: e.target.id
+            if(block.textContent !== ""){
+                Gameboard.prompts.textContent = `Can't play there!`;
+                Gameboard.prompts.style.backgroundColor = "rgba(255, 56, 49, 0.589)";
+                function delay(time){
+                    return new Promise(resolve => setTimeout(resolve, time));
+                }
+                  
+                async function wait() {
+                    await delay(1000);
+                    Gameboard.prompts.innerHTML = `<span>${name}</span>'s turn`;
+                    Gameboard.prompts.style.backgroundColor = "rgba(0, 224, 30, 0.329)";
+                }
+                  
+                wait();
+            }else{
+                let play = {
+                    sign: sign,
+                    playLocation: e.target.id
+                };
+                Gameboard.array.push(play);
+                console.log(Gameboard.array);
+                Game.renderPlays();
             };
-            Gameboard.array.push(play);
-            console.log(Gameboard.array);
         }));
     };
     return {name, sign, makePlay}
 };
 
+
+let playerOne = playerFactory("Link", "X");
+playerOne.makePlay();
