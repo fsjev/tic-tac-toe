@@ -5,7 +5,9 @@ const Gameboard = (() => {
     const form = document.querySelector("form");
     const overlay = document.getElementById("form-overlay");
     const prompts = document.querySelector(".prompts");
-    return {blocks, array, form, overlay, prompts};
+    const banner = document.getElementById("win-banner");
+    const restartBtn = document.getElementById("restart");
+    return {blocks, array, form, overlay, prompts, banner, restartBtn};
 })()
 
 
@@ -37,13 +39,13 @@ const Gameboard = (() => {
 const Game = (() => {
     let gameWon = false;
     let winnerSign;
-    const makeComputerPlay = (sign) => {
+    const makeComputerPlay = (name, sign) => {
         Gameboard.prompts.innerHTML = `<span>Computer</span>'s turn`;
         Gameboard.prompts.style.backgroundColor = "rgba(0, 0, 0, 0.144)";
         function delay(time){
             return new Promise(resolve => setTimeout(resolve, time));
         };
-
+    
         async function wait(){
             await delay(1000);
             let unoccupiedBlocks = Array.from(Gameboard.blocks).filter(block => block.textContent === "");
@@ -55,16 +57,21 @@ const Game = (() => {
             };
             Gameboard.array.push(play);
             renderPlays();
+            Game.checkForWin();
+            Gameboard.prompts.innerHTML = `<span>${name}</span>'s turn`;
+            Gameboard.prompts.style.backgroundColor = "rgba(0, 224, 30, 0.329)";
         };
         wait();
     };
 
     const renderPlays = () => {
-        Gameboard.array.forEach(play => {
-            let location = play.playLocation;
-            let matchingBlock = Array.from(Gameboard.blocks).find(block => block.id === location);
-            matchingBlock.textContent = play.sign;
-        });
+        if(gameWon === false){
+            Gameboard.array.forEach(play => {
+                let location = play.playLocation;
+                let matchingBlock = Array.from(Gameboard.blocks).find(block => block.id === location);
+                matchingBlock.textContent = play.sign;
+            });
+        };
     };
 
     const checkForWin = () => {
@@ -91,11 +98,13 @@ const Game = (() => {
                         .filter(block => block.id === "5" || block.id === "9" || block.id === "1")
                     }
                 };
-                // if(check[dir].win) console.log(check[dir].blockGroup, block.textContent);
+
                 for(let dir in check){
                     if(check[dir].win){
                         gameWon = true;
                         winnerSign = block.textContent;
+                        Gameboard.prompts.style.visibility = "hidden";
+                        displayGameResult(winnerSign);
                         for(let block of check[dir].blockGroup){
                             block.setAttribute("class", "win");
                         };
@@ -122,6 +131,8 @@ const Game = (() => {
                     if(check[dir].win){
                         gameWon = true;
                         winnerSign = block.textContent;
+                        Gameboard.prompts.style.visibility = "hidden";
+                        displayGameResult(winnerSign);
                         for(let block of check[dir].blockGroup){
                             block.setAttribute("class", "win");
                         };
@@ -142,6 +153,8 @@ const Game = (() => {
                     if(check[dir].win){
                         gameWon = true;
                         winnerSign = block.textContent;
+                        Gameboard.prompts.style.visibility = "hidden";
+                        displayGameResult(winnerSign);
                         for(let block of check[dir].blockGroup){
                             block.setAttribute("class", "win");
                         };
@@ -168,6 +181,8 @@ const Game = (() => {
                     if(check[dir].win){
                         gameWon = true;
                         winnerSign = block.textContent;
+                        Gameboard.prompts.style.visibility = "hidden";
+                        displayGameResult(winnerSign);
                         for(let block of check[dir].blockGroup){
                             block.setAttribute("class", "win");
                         };
@@ -218,26 +233,34 @@ const Game = (() => {
     const runGame = (playerName, sign, gameDifficulty) => {
         let playerOne = playerFactory(playerName, sign);
 
-        // while(Gameboard.array.length < 9){
-        // }
         playerOne.makePlay(makeComputerPlay);
-        // makeComputerPlay();
-        // checkForWin();
-        
-        // makeComputerPlay(sign);
-        // renderPlays();
     };
-    return {processForm, showForm, renderPlays, runGame}
+    const displayGameResult = (sign) => {
+        let playerOneSign = Gameboard.array.find(play => Gameboard.array.indexOf(play) === 0).sign;
+        Gameboard.overlay.setAttribute("class", "show");
+        Gameboard.banner.setAttribute("class", "show");
+        if(playerOneSign === sign){
+            Gameboard.banner.textContent = "You Won!";
+            Gameboard.banner.style.backgroundColor = "rgba(0, 224, 30, 3.329)";
+        }else{
+            Gameboard.banner.textContent = "You Lost!";
+            Gameboard.banner.style.backgroundColor = "rgba(255, 56, 49, 3.589)";
+        };
+        Gameboard.restartBtn.setAttribute("class", "banner");
+
+    };
+    return {processForm, showForm, renderPlays, runGame, checkForWin}
 })()
 
-Gameboard.form.addEventListener("submit", Game.processForm);
 window.addEventListener("load", Game.showForm);
-// Game.renderPlays()
+Gameboard.form.addEventListener("submit", Game.processForm);
+// Gameboard.restartBtn.addEventListener("click", )
 
 const playerFactory = (name, sign) => {
     const makePlay = (compPlay) => {
         Gameboard.prompts.innerHTML = `<span>${name}</span>'s turn`;
         Gameboard.prompts.style.backgroundColor = "rgba(0, 224, 30, 0.329)";
+
         Gameboard.blocks.forEach(block => block.addEventListener("click", (e) => {
             if(block.textContent !== ""){
                 Gameboard.prompts.textContent = `Can't play there!`;
@@ -247,7 +270,7 @@ const playerFactory = (name, sign) => {
                 }
                   
                 async function wait() {
-                    await delay(1000);
+                    await delay(500);
                     Gameboard.prompts.innerHTML = `<span>${name}</span>'s turn`;
                     Gameboard.prompts.style.backgroundColor = "rgba(0, 224, 30, 0.329)";
                 }
@@ -260,7 +283,8 @@ const playerFactory = (name, sign) => {
                 };
                 Gameboard.array.push(play);
                 Game.renderPlays();
-                compPlay(sign);
+                compPlay(name, sign);
+                Gameboard.restartBtn.setAttribute("class", "show");
             };
         }));
     };
