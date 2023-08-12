@@ -7,9 +7,11 @@ const Gameboard = (() => {
     const prompts = document.querySelector(".prompts");
     const banner = document.getElementById("win-banner");
     const restartBtn = document.getElementById("restart");
+    // const restartBtnT = 
+    
     return {blocks, array, form, overlay, prompts, banner, restartBtn};
 })()
-
+// console.log(Gameboard.banner);
 
 // let playOne = {sign: 'X', playLocation: '1'}
 
@@ -39,27 +41,32 @@ const Gameboard = (() => {
 const Game = (() => {
     let gameWon = false;
     let winnerSign;
+    let playerOneObject;
     const makeComputerPlay = (name, sign) => {
         Gameboard.prompts.innerHTML = `<span>Computer</span>'s turn`;
         Gameboard.prompts.style.backgroundColor = "rgba(0, 0, 0, 0.144)";
+
         function delay(time){
             return new Promise(resolve => setTimeout(resolve, time));
         };
     
         async function wait(){
             await delay(1000);
-            let unoccupiedBlocks = Array.from(Gameboard.blocks).filter(block => block.textContent === "");
-            let randomUnoccupiedBlock = unoccupiedBlocks[Math.floor(Math.random() * unoccupiedBlocks.length)];
-            let compSign = sign === "X"? "O" : "X";
-            let play = {
-                sign: compSign,
-                playLocation: randomUnoccupiedBlock.id
+            if(Gameboard.array.length !== 9){
+                let unoccupiedBlocks = Array.from(Gameboard.blocks).filter(block => block.textContent === "");
+                let randomUnoccupiedBlock = unoccupiedBlocks[Math.floor(Math.random() * unoccupiedBlocks.length)];
+                let compSign = sign === "X"? "O" : "X";
+                let play = {
+                    sign: compSign,
+                    playLocation: randomUnoccupiedBlock.id
+                };
+                Gameboard.array.push(play);
+                renderPlays();
+                checkForWin();
+                checkForDraw();
+                Gameboard.prompts.innerHTML = `<span>${name}</span>'s turn`;
+                Gameboard.prompts.style.backgroundColor = "rgba(0, 224, 30, 0.329)";
             };
-            Gameboard.array.push(play);
-            renderPlays();
-            Game.checkForWin();
-            Gameboard.prompts.innerHTML = `<span>${name}</span>'s turn`;
-            Gameboard.prompts.style.backgroundColor = "rgba(0, 224, 30, 0.329)";
         };
         wait();
     };
@@ -190,8 +197,6 @@ const Game = (() => {
                 };
             }
         });
-        // console.log(gameWon);
-        // console.log(winnerSign);
     };
     const processForm = (e) => {
         e.preventDefault();
@@ -232,29 +237,77 @@ const Game = (() => {
     };
     const runGame = (playerName, sign, gameDifficulty) => {
         let playerOne = playerFactory(playerName, sign);
-
         playerOne.makePlay(makeComputerPlay);
+        playerOneObject = playerOne;
     };
     const displayGameResult = (sign) => {
         let playerOneSign = Gameboard.array.find(play => Gameboard.array.indexOf(play) === 0).sign;
         Gameboard.overlay.setAttribute("class", "show");
         Gameboard.banner.setAttribute("class", "show");
+        Gameboard.restartBtn.setAttribute("class", "hide");
         if(playerOneSign === sign){
-            Gameboard.banner.textContent = "You Won!";
+            Gameboard.banner.innerHTML = '<p>You Won!</p><button id="end-restart">Restart</button>';
             Gameboard.banner.style.backgroundColor = "rgba(0, 224, 30, 3.329)";
         }else{
-            Gameboard.banner.textContent = "You Lost!";
+            Gameboard.banner.innerHTML = '<p>You Lost!</p><button id="end-restart">Restart</button>';
             Gameboard.banner.style.backgroundColor = "rgba(255, 56, 49, 3.589)";
         };
-        Gameboard.restartBtn.setAttribute("class", "banner");
-
+        const restartBtn = document.getElementById("end-restart");
+        restartBtn.addEventListener("click", restartGame);
     };
-    return {processForm, showForm, renderPlays, runGame, checkForWin}
+
+    const restartGame = () => {
+        if(gameWon === false){
+            Gameboard.array = [];
+            Gameboard.blocks.forEach(block => block.textContent = "");
+        }else{
+            gameWon = false;
+            Gameboard.array = [];
+            Gameboard.blocks.forEach(block => block.textContent = "");
+            Gameboard.blocks.forEach(block => block.removeAttribute("class", "win"));
+            Gameboard.overlay.setAttribute("class", "hide");
+            Gameboard.banner.setAttribute("class", "hide");
+            Gameboard.restartBtn.removeAttribute("class", "banner");
+            Gameboard.prompts.innerHTML = `<span>${playerOneObject.name}</span>'s turn`;
+            Gameboard.prompts.style.visibility = "visible";
+        };
+    };
+
+    const checkForDraw = () => {
+        let gameDraw = Gameboard.array.length === 9;
+        if(gameWon){
+            displayGameResult(winnerSign);
+        }else{
+            if(gameDraw) displayDraw();
+        };
+    };
+
+    const displayDraw = () => {
+        Gameboard.overlay.setAttribute("class", "show");
+        Gameboard.banner.setAttribute("class", "show");
+        Gameboard.restartBtn.setAttribute("class", "hide");
+        Gameboard.prompts.style.visibility = "hidden";
+        Gameboard.banner.innerHTML = '<p>Draw!</p><button id="end-restart">Restart</button>';
+        Gameboard.banner.style.backgroundColor = "#999";
+        const restartBtn = document.getElementById("end-restart");
+        restartBtn.addEventListener("click", () => {
+            Gameboard.array = [];
+            Gameboard.blocks.forEach(block => block.textContent = "");
+            Gameboard.blocks.forEach(block => block.removeAttribute("class", "win"));
+            Gameboard.overlay.setAttribute("class", "hide");
+            Gameboard.banner.setAttribute("class", "hide");
+            Gameboard.restartBtn.removeAttribute("class", "banner");
+            Gameboard.prompts.innerHTML = `<span>${playerOneObject.name}</span>'s turn`;
+            Gameboard.prompts.style.visibility = "visible";
+        });
+    };
+
+    return {processForm, showForm, renderPlays, runGame, checkForWin, restartGame, checkForDraw}
 })()
 
 window.addEventListener("load", Game.showForm);
 Gameboard.form.addEventListener("submit", Game.processForm);
-// Gameboard.restartBtn.addEventListener("click", )
+Gameboard.restartBtn.addEventListener("click", Game.restartGame);
 
 const playerFactory = (name, sign) => {
     const makePlay = (compPlay) => {
@@ -268,8 +321,8 @@ const playerFactory = (name, sign) => {
                 function delay(time){
                     return new Promise(resolve => setTimeout(resolve, time));
                 }
-                  
-                async function wait() {
+                
+                async function wait(){
                     await delay(500);
                     Gameboard.prompts.innerHTML = `<span>${name}</span>'s turn`;
                     Gameboard.prompts.style.backgroundColor = "rgba(0, 224, 30, 0.329)";
@@ -283,6 +336,8 @@ const playerFactory = (name, sign) => {
                 };
                 Gameboard.array.push(play);
                 Game.renderPlays();
+                Game.checkForWin();
+                Game.checkForDraw();
                 compPlay(name, sign);
                 Gameboard.restartBtn.setAttribute("class", "show");
             };

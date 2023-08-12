@@ -228,7 +228,6 @@ input[type=submit]:active{
 }
 #win-banner{
     box-shadow: 0px 0px 15px rgba(0,0,0,.6);
-    position: absolute;
     background-color: white;
     padding: 15px;
     border-radius: 10px;
@@ -243,6 +242,9 @@ input[type=submit]:active{
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
+}
+#win-banner p{
     font-weight: bold;
     font-size: 45px;
 }
@@ -260,7 +262,20 @@ input[type=submit]:active{
     color: black;
     font-weight: bold;
     scale: 1.2;
-    transition: .2s;
+}
+#end-restart{
+    width: 70px;
+    border: none;
+    background-color: rgba(0, 0, 0, 0.144);
+    padding: 3px 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+    cursor: pointer;
+    color: black;
+    font-weight: bold;
+    scale: 1.2;
 }
 #restart:active{
     scale: 1.1;
